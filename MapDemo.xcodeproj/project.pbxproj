@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E038AA1019631E5500169D1C /* MHJMapUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = E038AA0F19631E5500169D1C /* MHJMapUtils.m */; };
 		E0600C4C193774C500AA6B0E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E0600C4B193774C500AA6B0E /* Foundation.framework */; };
 		E0600C4E193774C500AA6B0E /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E0600C4D193774C500AA6B0E /* CoreGraphics.framework */; };
 		E0600C50193774C500AA6B0E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E0600C4F193774C500AA6B0E /* UIKit.framework */; };
@@ -23,6 +24,7 @@
 		E0600C7E1937771300AA6B0E /* MHJMapVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = E0600C7C1937771300AA6B0E /* MHJMapVC.xib */; };
 		E0600C801937785B00AA6B0E /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E0600C7F1937785B00AA6B0E /* MapKit.framework */; };
 		E0600C8419379DCB00AA6B0E /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = E0600C8319379DCB00AA6B0E /* icon.png */; };
+		E0FE1419196302CD000B8C81 /* MHJMapVC+Delegates.m in Sources */ = {isa = PBXBuildFile; fileRef = E0FE1418196302CD000B8C81 /* MHJMapVC+Delegates.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +38,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		E038AA0E19631E5500169D1C /* MHJMapUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MHJMapUtils.h; path = Utils/MHJMapUtils.h; sourceTree = "<group>"; };
+		E038AA0F19631E5500169D1C /* MHJMapUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MHJMapUtils.m; path = Utils/MHJMapUtils.m; sourceTree = "<group>"; };
 		E0600C48193774C500AA6B0E /* MapDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MapDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E0600C4B193774C500AA6B0E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		E0600C4D193774C500AA6B0E /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -57,6 +61,8 @@
 		E0600C7C1937771300AA6B0E /* MHJMapVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MHJMapVC.xib; sourceTree = "<group>"; };
 		E0600C7F1937785B00AA6B0E /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		E0600C8319379DCB00AA6B0E /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
+		E0FE1417196302CD000B8C81 /* MHJMapVC+Delegates.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MHJMapVC+Delegates.h"; sourceTree = "<group>"; };
+		E0FE1418196302CD000B8C81 /* MHJMapVC+Delegates.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MHJMapVC+Delegates.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,6 +90,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		E038AA0D19631CBD00169D1C /* Map Utils */ = {
+			isa = PBXGroup;
+			children = (
+				E038AA0E19631E5500169D1C /* MHJMapUtils.h */,
+				E038AA0F19631E5500169D1C /* MHJMapUtils.m */,
+			);
+			name = "Map Utils";
+			sourceTree = "<group>";
+		};
 		E0600C3F193774C500AA6B0E = {
 			isa = PBXGroup;
 			children = (
@@ -162,6 +177,8 @@
 			children = (
 				E0600C7A1937771300AA6B0E /* MHJMapVC.h */,
 				E0600C7B1937771300AA6B0E /* MHJMapVC.m */,
+				E038AA0D19631CBD00169D1C /* Map Utils */,
+				E0FE141A196302D3000B8C81 /* Map Delegates */,
 				E0600C7C1937771300AA6B0E /* MHJMapVC.xib */,
 			);
 			name = Map;
@@ -173,6 +190,15 @@
 				E0600C8319379DCB00AA6B0E /* icon.png */,
 			);
 			name = Resources;
+			sourceTree = "<group>";
+		};
+		E0FE141A196302D3000B8C81 /* Map Delegates */ = {
+			isa = PBXGroup;
+			children = (
+				E0FE1417196302CD000B8C81 /* MHJMapVC+Delegates.h */,
+				E0FE1418196302CD000B8C81 /* MHJMapVC+Delegates.m */,
+			);
+			name = "Map Delegates";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -273,8 +299,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E038AA1019631E5500169D1C /* MHJMapUtils.m in Sources */,
 				E0600C5C193774C500AA6B0E /* MHJAppDelegate.m in Sources */,
 				E0600C7D1937771300AA6B0E /* MHJMapVC.m in Sources */,
+				E0FE1419196302CD000B8C81 /* MHJMapVC+Delegates.m in Sources */,
 				E0600C58193774C500AA6B0E /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -472,6 +500,7 @@
 				E0600C76193774C500AA6B0E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		E0600C77193774C500AA6B0E /* Build configuration list for PBXNativeTarget "MapDemoTests" */ = {
 			isa = XCConfigurationList;
@@ -480,6 +509,7 @@
 				E0600C79193774C500AA6B0E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
