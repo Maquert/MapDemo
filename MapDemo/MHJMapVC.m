@@ -7,60 +7,72 @@
 //
 
 #import "MHJMapVC.h"
-
+#import "MHJMapUtils.h"
 
 @interface MHJMapVC ()
 
 // Core Location Properties
 @property (strong, nonatomic) CLLocationManager *manager;
-@property (strong, nonatomic) CLLocation *lastLocation;
 
 @end
 
 @implementation MHJMapVC
 
 
+typedef NS_ENUM(NSInteger, MapOptions)
+{
+    MapOptionsStandard = 0,
+    MapOptionsSatellite,
+    MapOptionsHybrid
+};
+
 
 #pragma mark - LifeCycle
 
 -(void) viewDidLoad
 {
+    [super viewDidLoad];
+    
     [self.map setDelegate:self];
     [self.manager startUpdatingLocation];
 }
 
 -(void) viewWillAppear:(BOOL)animated
 {
+    [super viewWillAppear:animated];
+    
+    [self setupMapView];
+    [self addRefreshButton];
+}
+
+-(void) setupMapView
+{
     CLLocation *defaultLocation = [self defaultLocation];
     [self setupMapWithLocation:defaultLocation];
     [self setupPinWithLocation:defaultLocation
                          title:@"Apple Store"
                    andSubtitle:@"Puerta del Sol"];
-    
     [self setupRouteFromLocation:(CLLocation *) self.manager.location
                               to:(CLLocation *) defaultLocation];
 }
 
 
-
-
-#pragma mark - Utils
+#pragma mark - MapView
 
 -(void) setupMapWithLocation:(CLLocation *) location
 {
-    // We set the coordinates by a CL object
-    CLLocationCoordinate2D defaultLocation;
-    defaultLocation.latitude = location.coordinate.latitude;
-    defaultLocation.longitude = location.coordinate.longitude;
+    // Coordinates
+    CLLocationCoordinate2D locationCoordinate;
+    locationCoordinate.latitude = location.coordinate.latitude;
+    locationCoordinate.longitude = location.coordinate.longitude;
     
-    // We set the parameters to the CoordinateRegion
-    MKCoordinateRegion region; // Portion of a map to display
-    region.center = defaultLocation;
-    region.span = [self defaultSpan];
+    // Region
+    MKCoordinateRegion region = [MHJMapUtils regionWithSpan:[self defaultSpan]
+                                 andCenterCoordinate:locationCoordinate];
     
-    // Init Map
+    // Setup Map
     [self.map setRegion:region
-               animated:YES]; // Moves to the current region
+               animated:YES]; // Animates to the current region
     [self.map regionThatFits:region];
     [self.map setMapType:MKMapTypeHybrid];
 }
@@ -72,6 +84,7 @@
 {
     if (location) {
         CLLocationCoordinate2D pinCoordinate = CLLocationCoordinate2DMake(location.coordinate.latitude, location.coordinate.longitude);
+        
         MKPointAnnotation *annotation = [[MKPointAnnotation alloc] init];
         [annotation setCoordinate:pinCoordinate];
         [annotation setTitle:title];
@@ -79,31 +92,32 @@
         
         [self.map addAnnotation:annotation];
     }
-    else
-    {
-        NSLog(@"No valid location");
-    }
 }
 
 
 -(void) setupRouteFromLocation:(CLLocation *) source
                             to:(CLLocation *) destination
 {
+    MKDirectionsRequest *request = [MHJMapUtils routeRequestWithSource:source
+                                                 andDestination:destination];
     NSLog(@"Routing \nFrom \n%@ \nTo \n%@", source, destination);
-    MKPlacemark *sourcePlace = [[MKPlacemark alloc] initWithCoordinate:source.coordinate addressDictionary:nil];
-    MKPlacemark *destinationPlace = [[MKPlacemark alloc] initWithCoordinate:destination.coordinate addressDictionary:nil];
     
-    MKMapItem *sourceItem = [[MKMapItem alloc] initWithPlacemark:sourcePlace];
-    MKMapItem *destinationItem = [[MKMapItem alloc] initWithPlacemark:destinationPlace];
+    [self routeWithRequest:request];
     
-    MKDirectionsRequest *request = [[MKDirectionsRequest alloc] init];
-    request.source = sourceItem;
-    request.destination = destinationItem;
-    
+}
+
+
+
+
+
+-(void) routeWithRequest:(MKDirectionsRequest *) request
+{
     MKDirections *directions = [[MKDirections alloc] initWithRequest:request];
-    [directions calculateDirectionsWithCompletionHandler:^(MKDirectionsResponse *response, NSError *error) {
-        // Code
-        if (error) {
+    [directions calculateDirectionsWithCompletionHandler:^(MKDirectionsResponse *response, NSError *error)
+    {
+        
+        if (error)
+        {
             NSLog(@"Error with routes: %@", error.debugDescription);
         }
         else
@@ -123,13 +137,13 @@
 }
 
 
-
 -(void) setup3DView
 {
     MKMapCamera* currentCamera  = self.map.camera;
     currentCamera.pitch = [@700 floatValue];
     [self.map setCamera:currentCamera animated:YES];
 }
+
 
 
 
@@ -148,10 +162,11 @@
 
 -(CLLocation *) defaultLocation
 {
-    // Apple Store Puerta del Sol
+    // Apple Store - Puerta del Sol
     CLLocation *location = [[CLLocation alloc] initWithLatitude:40.4169163 longitude:-3.702427];
     return location;
 }
+
 
 
 
@@ -168,6 +183,31 @@
 }
 
 
+-(void) titleForLocation:(CLLocation *) location
+{
+    CLGeocoder *geoCoder = [[CLGeocoder alloc] init];
+    [geoCoder reverseGeocodeLocation:location
+                   completionHandler:^(NSArray *placemarks, NSError *error)
+     {
+         if (error) {
+             self.title = @"No location";
+         }
+         else
+         {
+             MKPlacemark *place = [placemarks lastObject];
+             NSString *address = [NSString stringWithFormat:@"%@", place.locality];
+             self.title = address;
+         }
+         
+    }];
+    
+}
+
+
+
+
+
+
 
 
 #pragma mark - Events
@@ -175,10 +215,10 @@
 -(IBAction)mapButtonTapped:(UISegmentedControl *)segmentedButton
 {
     switch (segmentedButton.selectedSegmentIndex) {
-        case 1:
+        case MapOptionsSatellite:
             [self.map setMapType:MKMapTypeSatellite];
             break;
-        case 2:
+        case MapOptionsHybrid:
             [self.map setMapType:MKMapTypeHybrid];
             break;
         default:
@@ -190,74 +230,36 @@
 
 -(IBAction)pinWasTapped:(id)sender
 {
-    [self setupRouteFromLocation:[self defaultLocation] to:[self.manager location]];
+    [self setupRouteFromLocation:[self defaultLocation]
+                              to:[self.manager location]];
 }
 
-
-
-
-
-#pragma mark - CoreLocation Delegate
-
--(void) locationManager:(CLLocationManager *)manager
-     didUpdateLocations:(NSArray *)locations
+-(void)refreshRoute:(id)sender
 {
-    CLLocation *location = [locations lastObject];
-    //NSLog(@"\n\nLocation update from CL to: %@", location);
-    self.lastLocation = location;
+    MKDirectionsRequest *request = [MHJMapUtils routeRequestWithSource:[self defaultLocation] andDestination:self.lastLocation];
+    
+    MKCoordinateSpan span = [MHJMapUtils spanWithNumber:@10];
+    MKCoordinateRegion region = [MHJMapUtils regionWithSpan:span andCenterCoordinate:[[self defaultLocation] coordinate]];
+    
+    [self.map setRegion:region animated:YES];
+    
+    [self routeWithRequest:request];
+    
+    [self titleForLocation:self.lastLocation];
 }
 
 
+#pragma mark - NavigationBar
 
-#pragma mark - MapKit Delegate
-
--(void) mapView:(MKMapView *)mapView
-didUpdateUserLocation:(MKUserLocation *)userLocation
+-(void) addRefreshButton
 {
-    //NSLog(@"\n\nLocation update from MK to: %@", userLocation.location);
-    //[self.map setCenterCoordinate:userLocation.location.coordinate animated:YES];
+    UIBarButtonItem *refreshButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(refreshRoute:)];
+    self.navigationItem.rightBarButtonItem = refreshButton;
 }
 
-
--(MKAnnotationView *) mapView:(MKMapView *)mapView
-            viewForAnnotation:(id<MKAnnotation>)annotation
+-(BOOL) prefersStatusBarHidden
 {
-    static NSString *AnnotationIdentifier = @"Annotation";
-    MKPinAnnotationView *pin = [[MKPinAnnotationView alloc]
-                                initWithAnnotation:annotation
-                                reuseIdentifier:AnnotationIdentifier];
-    
-    // Customize Pin
-    [pin setAnimatesDrop:YES];
-    [pin setPinColor:MKPinAnnotationColorPurple];
-    [pin setCanShowCallout:YES]; // Shows extra info
-    
-    // Image
-    UIImageView *pinImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"icon.png"]];
-    [pinImage setFrame:CGRectMake(0, 0, 30, 30)];
-    [pin setLeftCalloutAccessoryView:pinImage];
-    
-    // Button
-    UIButton *pinbutton = [UIButton buttonWithType:UIButtonTypeContactAdd];
-    [pin setRightCalloutAccessoryView:pinbutton];
-    [pinbutton addTarget:self
-                  action:@selector(pinWasTapped:)
-        forControlEvents:UIControlEventTouchUpInside];
-    
-    return pin;
-}
-
-
-- (MKOverlayView *) mapView:(MKMapView *)mapView
-             viewForOverlay:(id)overlay {
-    
-    if ([overlay isKindOfClass:[MKPolyline class]]) {
-        MKPolylineView* aView = [[MKPolylineView alloc]initWithPolyline:(MKPolyline*)overlay] ;
-        aView.strokeColor = [[UIColor blueColor] colorWithAlphaComponent:0.5];
-        aView.lineWidth = 10;
-        return aView;
-    }
-    return nil;
+    return YES;
 }
 
 

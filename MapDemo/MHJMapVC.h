@@ -6,8 +6,7 @@
 //  Copyright (c) 2014 Miguel Hernández. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-
+@import UIKit;
 @import MapKit;
 @import CoreLocation;
 
@@ -16,11 +15,20 @@
 
 // Properties
 @property (weak, nonatomic) IBOutlet MKMapView *map;
+@property (strong, nonatomic) CLLocation *lastLocation;
+
+
+// Methods
+-(void) titleForLocation:(CLLocation *) location;
+-(void) routeWithRequest:(MKDirectionsRequest *) request;
+
+-(CLLocation *) defaultLocation;
+-(MKCoordinateSpan) defaultSpan;
 
 
 // Events
-
 -(IBAction)mapButtonTapped:(UISegmentedControl *)segmentedButton;
+-(IBAction)pinWasTapped:(id)sender;
 
 
 @end
