@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Miguel Hernández. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+@import UIKit;
 
 @interface MHJAppDelegate : UIResponder <UIApplicationDelegate>
 

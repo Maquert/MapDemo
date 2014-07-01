@@ -19,8 +19,10 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
     
     // Init
     MHJMapVC *mapVC = [[MHJMapVC alloc] initWithNibName:nil bundle:nil];
-    self.window.rootViewController = mapVC;
     
+    UINavigationController *navMap = [[UINavigationController alloc]
+                                      initWithRootViewController:mapVC];
+    self.window.rootViewController = navMap;
     
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
